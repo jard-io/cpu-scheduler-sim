@@ -1,6 +1,6 @@
 ## Scheduling Algorithms
-**Start:** October 25, 2021, at 09:00am   
-**Due:** November 15, 2021, at 09:00pm
+**Start:** Feb 14, 2023, at 09:00am   
+**Due:** March 7, 2023, at 09:00pm
 
 This project involves implementing (i.e., simulating) several different process scheduling algorithms. 
 The scheduler will be assigned a predefined set of tasks and will schedule the tasks based on the selected scheduling 
