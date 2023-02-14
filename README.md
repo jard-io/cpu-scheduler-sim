@@ -1,4 +1,4 @@
-## Scheduling Algorithms
+## Simulating the Common CPU Scheduling Algorithms
 **Start:** Feb 14, 2023, at 09:00am   
 **Due:** March 10, 2023, at 09:00pm
 
