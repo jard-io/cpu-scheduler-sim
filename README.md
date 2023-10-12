@@ -58,8 +58,8 @@ and would execute the scheduler (using the schedule of tasks `schedule.txt`) as 
     ./fcfs schedule.txt 
 Before proceeding, be sure to familiarize yourself with the source code provided as well as the Makefile.
 
-## Example output
-The correct output of a sample input file for all algorithms can be seen [here](CorrectOutput.md).
+## Evaluating Your Implementation
+You can see the correct outputs for all algorithms for a sample input [here](CorrectOutput.md).
 
 
 ## Deliverables
@@ -79,7 +79,8 @@ schedule_priority_rr.c
 
 **Note 1:** [here is a quick tutorial on makefile](http://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/), in case you are not familiar.
 
-**Note 2**: TAs will evaluate your projects on one of the Department's servers with specific configuration. You need to configure your account on one of the department servers according to this specific configuration. To do so, you may take a look at a how-to tutorial that is available in the course's eClass under the Project section.  
+**Note 2**: TAs will evaluate your projects on one of the Department's servers with the EECS3221 standard configuration. 
+The standard configuration for the course has been described in the Projects Environmental Setup Guide, available in eClass. 
 
 ## Evaluation
 Correct implementation of each algorithm will get 4 marks which make a total of 20 points for the project. 
