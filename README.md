@@ -1,6 +1,6 @@
 ## Simulating the Common CPU Scheduling Algorithms
-**Start:** Feb 14, 2023, at 09:00am   
-**Due:** March 11, 2023, at 09:00pm (extended for 24 hrs)
+**Start:** Oct 16, 2023, at 09:00am   
+**Due  :** Nov 12, 2023, at 09:00pm 
 
 This project involves implementing (i.e., simulating) several different process scheduling algorithms. 
 The scheduler will be assigned a predefined set of tasks and will schedule the tasks based on the selected scheduling 
