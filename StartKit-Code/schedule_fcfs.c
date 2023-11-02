@@ -2,85 +2,48 @@
 #include <stdlib.h>
 #include <string.h>
 #define BUF_SIZE 65536
+
+#include "list.h"
+#include "cpu.h"
+#include "task.h"
 // FCFS
-int main(int argc, char* argv[]) {
 
-    // open file
-    FILE *file = fopen("sample-schedule.txt", "r");
-    if (!file) {
-        perror("Failed to open file.");
-        return 1;
+
+Queue* queue;
+int lines = 0;
+
+
+void add(char* name, int priority, int burst) {
+    if (!queue) {
+        queue = createQueue();
     }
+    int taskID;
+    char T;
+    sscanf(name, "%c%d", &T, &taskID);
 
+    int task[] = {taskID, priority, burst, burst};
+    push(queue, task);
+    lines++;
+}
 
-    char buf[BUF_SIZE];
-    int lines = 0;
-
-    // counts lines efficiently (fgets is too slow for large text files)
-    for(;;)
-    {
-        size_t res = fread(buf, 1, BUF_SIZE, file);
-        if (ferror(file))
-            return -1;
-
-        int i;
-        for(i = 0; i < res; i++)
-            if (buf[i] == '\n')
-                lines++;
-
-        if (feof(file)) {
-            break;
-        }
-            
-    }
-
-    // printf("Lines: %d\n", lines);
+void schedule() {
 
     // allocate memory for 2D array
-
     int **tasks = malloc(lines * sizeof(int *));
+    Task* qPtr = queue->top;
 
-    // dump for task name
-    char taskID[3];
-
-    if (!tasks) {
-        perror("Error allocating memory");
-        fclose(file);
-        return 1;
+    if (!qPtr) {
+        perror("Error: scheduling queue is empty.");
+        return;
     }
 
-    fseek(file, 0, SEEK_SET);
-
-    // read file
     for (int i = 0; i < lines; i++) {
-        tasks[i] = malloc(3 * sizeof(int)); // assume there are always 3 values
-
-        // error checking
-        if (!tasks[i]) {
-            perror("Error allocating memory.");
-            fclose(file);
-            for (int j = 0; j < i; j++) {
-                free(tasks[j]);
-            }
-            free(tasks);
-            return 1;
-        }
-        // store order in which task arrives
-        tasks[i][0] = i;
-        if (fscanf(file, "%99[^,], %d, %d\n", taskID, &tasks[i][1], &tasks[i][2]) != 3) {
-            fprintf(stderr, " Error reading line %d\n", i + 1);
-            fclose(file);
-            for (int j = 0; j < i; j++) {
-                free(tasks[j]);
-            }
-            free(tasks);
-            return 1;
-        }
-    }
-
-    // Print the numbers to verify they were read correctly
-    for (int i = 0; i < lines; i++) {
-        printf("Running task = [T%d] [%d] [%d] for %d units.\n", tasks[i][0], tasks[i][1], tasks[i][2], tasks[i][2]);
+        tasks[i] = malloc(4 * sizeof(int));
+        tasks[i][0] = qPtr->taskID;
+        tasks[i][1] = qPtr->priority;
+        tasks[i][2] = qPtr->currentBurst;
+        tasks[i][3] = qPtr->initialBurst;
+        qPtr=qPtr->next;
     }
 
     // CALCULATION (FCFS)
@@ -144,7 +107,4 @@ int main(int argc, char* argv[]) {
         free(tasks[i]);
     }
     free(tasks);
-
-    fclose(file);
-    return 0;
 }

@@ -28,6 +28,11 @@ int main(int argc, char *argv[])
 
     in = fopen(argv[1],"r");
     
+    if (!in) {
+        perror("File is null");
+        return EXIT_FAILURE;
+    }
+    
     while (fgets(task,SIZE,in) != NULL) {
         temp = strdup(task);
         name = strsep(&temp,",");

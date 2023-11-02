@@ -13,20 +13,20 @@
 #define Q 10 // quant
 
 
-Queue* queue;
+Queue* processQueue;
 int lines = 0;
 
 
 void add(char* name, int priority, int burst) {
-    if (!queue) {
-        queue = createQueue();
+    if (!processQueue) {
+        processQueue = createQueue();
     }
     int taskID;
     char T;
     sscanf(name, "%c%d", &T, &taskID);
 
     int task[] = {taskID, priority, burst, burst};
-    push(queue, task);
+    push(processQueue, task);
     lines++;
 }
 
@@ -35,19 +35,20 @@ void schedule() {
 
     // allocate memory for 2D array
     int **tasks = malloc(lines * sizeof(int *));
-    Task* qPtr = queue->top;
+    Task* ptr = processQueue->top;
 
-    if (!qPtr) {
+    if (!ptr) {
         perror("Error: scheduling queue is empty.");
         return;
     }
 
     for (int i = 0; i < lines; i++) {
-        tasks[i][0] = qPtr->taskID;
-        tasks[i][1] = qPtr->priority;
-        tasks[i][2] = qPtr->currentBurst;
-        tasks[i][3] = qPtr->initialBurst;
-        qPtr=qPtr->next;
+        tasks[i] = malloc(4 * sizeof(int));
+        tasks[i][0] = ptr->taskID;
+        tasks[i][1] = ptr->priority;
+        tasks[i][2] = ptr->currentBurst;
+        tasks[i][3] = ptr->initialBurst;
+        ptr=ptr->next;
     }
 
     mergeSort(tasks, 0, lines- 1);
@@ -89,6 +90,9 @@ void schedule() {
 
     int priorityPtr = 0;
 
+    Queue* queue = createQueue();
+
+
     while (priorityPtr < lines) {
         
         // loop through tasks
@@ -106,7 +110,7 @@ void schedule() {
 
         int firstResponsePtr = 0;
         int initialQueueSize = queue->size;
-        // printQueue(queue);
+        printQueue(queue);
 
         // start giving CPU
         while (queue->size > 0) {
@@ -128,7 +132,7 @@ void schedule() {
                     // tasks[qPtr->taskID][2] -= qPtr->currentBurst;
                 }
                 else {
-                    run(qPtr, 10);
+                    run(qPtr, Q);
                     // printf("Running task = [T%d] [%d] [%d] for 10 units.\n", qPtr->taskID, qPtr->priority, qPtr->currentBurst);
                     timeLine += Q;
                     qPtr->currentBurst -= Q;
@@ -150,7 +154,7 @@ void schedule() {
             if (qPtr->currentBurst == 0) {
                 // update waiting time
                 
-                // printf("\n^T%d Waiting Time: %d\n\n", qPtr->taskID, qPtr->initialBurst);
+                // printf("\n^T%d Waiting Time: %d\n\n", qPtr->taskID, timeLine - qPtr->initialBurst);
                 totalWaitingTime += (timeLine - qPtr->initialBurst);
                 totalTurnaround += timeLine;
                 Task* taskToPop = qPtr;
@@ -163,6 +167,7 @@ void schedule() {
 
     }
 
+    // printf("\n\n\n Lines: %d \n\n\n", lines);
     float avgWaitingTime = totalWaitingTime / lines;
     float avgTurnaroundTime = totalTurnaround / lines;
     float avgResponseTime = totalResponse / lines;
