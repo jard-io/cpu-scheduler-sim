@@ -32,8 +32,8 @@ priority: driver.o list.o CPU.o schedule_priority.o
 schedule_fcfs.o: schedule_fcfs.c
 	$(CC) $(CFLAGS) -c schedule_fcfs.c
 
-priority_rr: driver.o list.o CPU.o schedule_priority_rr.o
-	$(CC) $(CFLAGS) -o priority_rr driver.o schedule_priority_rr.o list.o CPU.o
+priority_rr: driver.o list.o CPU.o sort.o schedule_priority_rr.o
+	$(CC) $(CFLAGS) -o priority_rr driver.o schedule_priority_rr.o list.o CPU.o sort.o
 
 driver.o: driver.c
 	$(CC) $(CFLAGS) -c driver.c

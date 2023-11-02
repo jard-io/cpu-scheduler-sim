@@ -7,6 +7,7 @@
 #include "task.h"
 #include "sort.h"
 #include "schedulers.h"
+#include "cpu.h"
 
 #define BUF_SIZE 65536
 #define Q 10 // quant
@@ -30,7 +31,7 @@ void add(char* name, int priority, int burst) {
 }
 
 // Round - Robin -> each process is FCFS but they are given a specific amount of time to be processed (quant)
-int schedule() {
+void schedule() {
 
     // allocate memory for 2D array
     int **tasks = malloc(lines * sizeof(int *));
@@ -38,7 +39,7 @@ int schedule() {
 
     if (!qPtr) {
         perror("Error: scheduling queue is empty.");
-        return 1;
+        return;
     }
 
     for (int i = 0; i < lines; i++) {
@@ -46,6 +47,7 @@ int schedule() {
         tasks[i][1] = qPtr->priority;
         tasks[i][2] = qPtr->currentBurst;
         tasks[i][3] = qPtr->initialBurst;
+        qPtr=qPtr->next;
     }
 
     mergeSort(tasks, 0, lines- 1);
@@ -119,13 +121,15 @@ int schedule() {
 
             if (qPtr->currentBurst >= Q) {
                 if (queue->size == 1) {
-                    printf("Running task = [T%d] [%d] [%d] for %d units.\n", qPtr->taskID, qPtr->priority, qPtr->currentBurst, qPtr->currentBurst);
+                    run(qPtr, qPtr->currentBurst);
+                    // printf("Running task = [T%d] [%d] [%d] for %d units.\n", qPtr->taskID, qPtr->priority, qPtr->currentBurst, qPtr->currentBurst);
                     timeLine += qPtr->currentBurst;
                     qPtr->currentBurst -= qPtr->currentBurst;
                     // tasks[qPtr->taskID][2] -= qPtr->currentBurst;
                 }
                 else {
-                    printf("Running task = [T%d] [%d] [%d] for 10 units.\n", qPtr->taskID, qPtr->priority, qPtr->currentBurst);
+                    run(qPtr, 10);
+                    // printf("Running task = [T%d] [%d] [%d] for 10 units.\n", qPtr->taskID, qPtr->priority, qPtr->currentBurst);
                     timeLine += Q;
                     qPtr->currentBurst -= Q;
                     // tasks[qPtr->taskID][2] -= Q;
@@ -134,7 +138,8 @@ int schedule() {
                 }
             }    
             else{
-                printf("Running task = [T%d] [%d] [%d] for %d units.\n", qPtr->taskID, qPtr->priority, qPtr->currentBurst, qPtr->currentBurst);
+                // printf("Running task = [T%d] [%d] [%d] for %d units.\n", qPtr->taskID, qPtr->priority, qPtr->currentBurst, qPtr->currentBurst);
+                run(qPtr, qPtr->currentBurst);
                 timeLine += qPtr->currentBurst;  
                 qPtr->currentBurst -= qPtr->currentBurst;
                 // tasks[qPtr->taskID][2] -= qPtr->currentBurst;
@@ -173,5 +178,5 @@ int schedule() {
 
     free(tasks);
     free(queue);
-    return 0;
+
 }
