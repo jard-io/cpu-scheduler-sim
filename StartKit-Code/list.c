@@ -10,46 +10,83 @@
 #include "task.h"
 
 
-// add a new task to the list of tasks
-void insert(struct node **head, Task *newTask) {
-    // add the new task to the list 
-    struct node *newNode = malloc(sizeof(struct node));
 
-    newNode->task = newTask;
-    newNode->next = *head;
-    *head = newNode;
+Queue* createQueue() {
+    Queue* queue = (Queue*)malloc(sizeof(Queue));
+    if (!queue) {
+        perror("Failed to create Queue");
+        exit(EXIT_FAILURE);
+    }
+
+    queue->top = NULL;
+    queue->size = 0;
+    return queue;
 }
 
-// delete the selected task from the list
-void delete(struct node **head, Task *task) {
-    struct node *temp;
-    struct node *prev;
+Task* createTask(int task[]) {
+    Task* newTask = (Task*)malloc(sizeof(Task));
+    if (!newTask) {
+        perror("Failed to queue task");
+        exit(EXIT_FAILURE);
+    }
 
-    temp = *head;
-    // special case - beginning of list
-    if (strcmp(task->name,temp->task->name) == 0) {
-        *head = (*head)->next;
+    newTask->taskID = task[0];
+    newTask->priority = task[1];
+    newTask->currentBurst = task[2];
+    newTask->initialBurst = task[3];
+    newTask->prev = NULL;
+    newTask->next = NULL;
+    return newTask;
+}
+
+void push(Queue* queue, int task[]) {
+    Task* newTask = createTask(task);
+    if (queue->top) {
+        queue->last->next = newTask;
+        newTask->prev = queue->last;
+        queue->last = newTask;
     }
     else {
-        // interior or last element in the list
-        prev = *head;
-        temp = temp->next;
-        while (strcmp(task->name,temp->task->name) != 0) {
-            prev = temp;
-            temp = temp->next;
-        }
-
-        prev->next = temp->next;
+        queue->top = newTask;
+        queue->last = newTask; 
     }
+    queue->size++;
 }
 
-// traverse the list
-void traverse(struct node *head) {
-    struct node *temp;
-    temp = head;
-
-    while (temp != NULL) {
-        printf("[%s] [%d] [%d]\n",temp->task->name, temp->task->priority, temp->task->burst);
-        temp = temp->next;
+int pop(Queue* queue, Task* task){
+    // printf("Popped T%d\n", task->taskID);
+    if (task->prev) {
+        task->prev->next = task->next;
     }
+    else {
+        // if we're removing the top element, update top pointer
+        queue->top = task->next;
+    }
+
+    if (task->next) {
+        task->next->prev = task->prev;
+    }
+    else {
+        // if we're removing the last element, update last pointer
+        queue->last = task->prev;
+    }
+
+
+    int lastBurst = task->currentBurst;
+    free(task);
+    queue->size--;
+    // printf("\nQueue size: %d\n", queue->size);
+    // printf("Done popping!\n");
+    return lastBurst;
+}
+
+void printQueue(Queue* queue) {
+    Task* current = queue->top;
+    printf("\nQueue: ");
+
+    while(current) {
+        printf("T%d ", current->taskID);
+        current = current->next;
+    }
+    printf("\n");
 }

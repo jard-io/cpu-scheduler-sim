@@ -6,11 +6,13 @@
 #define TASK_H
 
 // representation of a task
-typedef struct task {
-    char *name;
-    int tid;
+typedef struct Task {
+    int taskID;
     int priority;
-    int burst;
+    int currentBurst;
+    int initialBurst;
+    struct Task* prev;
+    struct Task* next;
 } Task;
 
 #endif
